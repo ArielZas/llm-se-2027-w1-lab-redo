@@ -129,3 +129,17 @@ second group is the reason this course exists.
 ### One sentence: what did you miss, and why do you think you missed it?
 
 
+
+## Exercise A status (2026-11-02)
+
+The twenty-issue live review is deferred at the user's explicit request. An initial
+attempt was blocked by sandbox networking before producing any triage records;
+a network-enabled attempt was rejected by automatic approval review. The user
+then chose "Skip the live run for now". There are no model outputs or surprising
+classifications to report, and no model-accuracy claims are made.
+
+Run `uv run python tools/run_dev_triage.py` when ready, then inspect
+`data/dev-triage-results.jsonl` and fill in the Exercise A surprises above.
+Offline tests verify record validation, identity preservation, and exclusion of
+labels/gold metadata. They do not establish classification quality or semantic
+resistance to prompt injection. The sealed test split was not opened.

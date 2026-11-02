@@ -4,6 +4,8 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .dspy_cache/
+.uv-cache/
+data/dev-triage-results.jsonl
 data/raw/
 sessions/*.jsonl
 !sessions/.gitkeep

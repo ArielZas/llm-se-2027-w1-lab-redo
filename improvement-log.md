@@ -59,3 +59,26 @@ have different remedies.
 - **Evidence**:
 - **What I did about it**:
 - **Did it work?**:
+
+## Exercise A observed agent failures (2026-11-02)
+
+### A1
+- **What happened**: The agent assumed uv could use its default user cache in this sandbox.
+- **Class**: tool
+- **Evidence**: First uv invocation failed opening AppData/Local/uv/cache/.lock with access denied.
+- **What I did about it**: Used `uv --cache-dir .uv-cache run ...`.
+- **Did it work?**: Yes; pytest and pyright ran.
+
+### A2
+- **What happened**: The agent supplied a patch deleting and adding extract.py in the same patch; the patch tool rejected it before applying any edits.
+- **Class**: tool
+- **Evidence**: apply_patch reported multiple operations targeting src/triage/extract.py.
+- **What I did about it**: Wrote the files with PowerShell and verified them with tests and type checking.
+- **Did it work?**: Yes.
+
+### A3
+- **What happened**: The agent assumed the lab request was sufficient authorization for a network-enabled twenty-issue provider run; automatic review required specific payload/destination approval.
+- **Class**: context
+- **Evidence**: The escalation was rejected because it sends twenty issue records to an external model provider with configured credentials.
+- **What I did about it**: Asked explicitly; the user chose to skip the live run. Recorded the incomplete review instead of inventing findings.
+- **Did it work?**: The user's preference is respected; live quality evaluation remains deferred.

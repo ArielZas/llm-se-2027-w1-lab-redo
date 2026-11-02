@@ -287,3 +287,28 @@ Issues are fetched from public GitHub repositories for coursework:
 * [textual](https://github.com/Textualize/textual)
 
 Content belongs to its authors. Redistributed here for teaching only.
+
+## Exercise A architecture and usage
+
+The flow is `JSON -> Issue -> DSPyExtractor -> Assessment -> TriageRecord -> JSON`.
+`models.py` owns the validated contracts, `extract.py` owns the DSPy signature and
+provider boundary, and `cli.py` owns file/stdin input and process exit behavior.
+The `triage` function accepts an extractor callable so tests need no credentials.
+Routing remains a later step.
+
+Example input (save as `issue.json`):
+
+```json
+{"repo":"hono","number":1,"title":"Response header is missing","body":"Calling the endpoint returns no Content-Type header."}
+```
+
+With `LLM_MODEL` and the matching provider key set in `.env`:
+
+```powershell
+uv run python -m triage.cli issue.json
+uv run python tools/run_dev_triage.py
+```
+
+The second command is an optional, billable inspection of the first twenty dev
+issues; it writes `data/dev-triage-results.jsonl`. It has not been completed in
+this session: the user chose to skip the live run. The sealed test set is unused.
