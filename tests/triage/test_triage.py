@@ -1,4 +1,5 @@
 import json
+from io import StringIO
 from pathlib import Path
 import pytest
 from pydantic import ValidationError
@@ -70,3 +71,74 @@ def test_cli_outputs_one_valid_record(
     assert captured.err == ""
     assert json.loads(captured.out)["number"] == 42
     assert len(captured.out.splitlines()) == 1
+
+
+@pytest.mark.parametrize("index", [0, 1])
+@pytest.mark.parametrize("use_stdin", [False, True])
+def test_cli_selects_only_requested_issue(
+    index: int, use_stdin: bool, tmp_path: Path,
+    capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    selected = {"repo": "hono", "number": index + 10, "title": "Selected issue"}
+    # The unselected entry need not be a valid issue and must not reach extraction.
+    issues: list[object] = [None, None]
+    issues[index] = selected
+    calls: list[int] = []
+
+    def fake(issue: Issue) -> Assessment:
+        calls.append(issue.number)
+        assert issue.title == selected["title"]
+        return Assessment(issue_type="unknown", component=None, severity="unknown",
+                          has_reproduction_steps=None, summary=issue.title,
+                          uncertainty="Unclear")
+
+    monkeypatch.setattr(cli, "configured_extractor", lambda: fake)
+    raw = json.dumps(issues)
+    path = tmp_path / "issues.json"
+    if use_stdin:
+        monkeypatch.setattr(cli.sys, "stdin", StringIO(raw))
+        source = "-"
+    else:
+        path.write_text(raw, encoding="utf-8")
+        source = str(path)
+    assert cli.main([source, "--index", str(index)]) == 0
+    captured = capsys.readouterr()
+    assert captured.err == ""
+    assert json.loads(captured.out)["number"] == index + 10
+    assert len(captured.out.splitlines()) == 1
+    assert calls == [index + 10]
+
+
+@pytest.mark.parametrize(("raw", "options"), [
+    ('[{"repo":"hono","number":1,"title":"Issue"}]', []),
+    ('[{"repo":"hono","number":1,"title":"Issue"}]', ["--index", "-1"]),
+    ('[{"repo":"hono","number":1,"title":"Issue"}]', ["--index", "1"]),
+    ("[]", ["--index", "0"]),
+    ('{"repo":"hono","number":1,"title":"Issue"}', ["--index", "0"]),
+    ("[null]", ["--index", "0"]),
+    ("[{}]", ["--index", "0"]),
+    ("not JSON", ["--index", "0"]),
+])
+def test_cli_rejects_invalid_selection_before_model_call(
+    raw: str, options: list[str], tmp_path: Path,
+    capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def unexpected_call() -> None:
+        pytest.fail("Invalid selection must not configure a provider")
+
+    monkeypatch.setattr(cli, "configured_extractor", unexpected_call)
+    path = tmp_path / "issues.json"
+    path.write_text(raw, encoding="utf-8")
+    assert cli.main([str(path), *options]) == 1
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "Invalid input" in captured.err
+
+
+def test_cli_rejects_non_integer_index(capsys: pytest.CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit) as error:
+        cli.main(["unused.json", "--index", "first"])
+    assert error.value.code == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "invalid int value" in captured.err

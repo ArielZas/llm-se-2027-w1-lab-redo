@@ -82,3 +82,10 @@ have different remedies.
 - **Evidence**: The escalation was rejected because it sends twenty issue records to an external model provider with configured credentials.
 - **What I did about it**: Asked explicitly; the user chose to skip the live run. Recorded the incomplete review instead of inventing findings.
 - **Did it work?**: The user's preference is respected; live quality evaluation remains deferred.
+
+### A4
+- **What happened**: The agent implemented a CLI that accepts a single-issue JSON file instead of allowing selection by index from the development dataset. The original requirement was not specific enough.
+- **Class**: communication
+- **Evidence**: Running `uv run python -m triage.cli --help` showed only a positional `issue` argument, with no `--index` option.
+- **What I did about it**: Clarified the requirement and asked the agent to support selecting an issue by zero-based index from a JSON dataset while preserving single-issue input.
+- **Did it work?**: Pending verification after implementing and testing the updated CLI.

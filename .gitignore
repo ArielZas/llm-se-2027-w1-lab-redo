@@ -9,3 +9,4 @@ data/dev-triage-results.jsonl
 data/raw/
 sessions/*.jsonl
 !sessions/.gitkeep
+lab_a_output.json

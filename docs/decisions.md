@@ -40,3 +40,10 @@ write down what you actually decided, not what you think is the right answer.
 - Provide tools/run_dev_triage.py solely for the lab's first-20-dev inspection, with JSONL records or exception class names in data/dev-triage-results.jsonl; never read the sealed test split.
 - Defer the live twenty-issue run after the user explicitly requested skipping it; make no model-quality claims until it runs.
 - Use a workspace-local uv cache because this sandbox cannot write the default user cache.
+
+## CLI array selection (2026-11-02)
+
+- Accept a top-level JSON array with an explicit zero-based integer `--index`, e.g. `uv run python -m triage.cli data/snapshot/dev.json --index 0`; do not implicitly select an element when the flag is omitted.
+- Preserve single-object file/stdin input without `--index`; require an array when `--index` is supplied, including for stdin.
+- Reject negative indexes, empty arrays, out-of-range indexes, and invalid selected issues before configuring or calling the model; use exit 1 with stderr and no stdout, while argparse rejects noninteger indexes with exit 2.
+- Parse the complete JSON array but validate and triage only its selected element; unrelated elements need not satisfy the issue schema, and the command still emits exactly one record.

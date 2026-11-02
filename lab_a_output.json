@@ -1,0 +1,436 @@
+{
+  "source": "data/snapshot/dev.json",
+  "source_sha256": "f217082831c65607d25cc4f50c5b0b682cbae6abd173de423787eca24095ad21",
+  "seed": 42,
+  "sampling": "random.Random(42).sample(range(len(issues)), 20), without replacement",
+  "model": "openai/gpt-4o-mini",
+  "started_at": "2026-11-02T12:40:36.718949+00:00",
+  "note": "Seed fixes issue selection; model responses may vary between runs.",
+  "selected_indices": [
+    163,
+    28,
+    6,
+    189,
+    70,
+    62,
+    57,
+    35,
+    188,
+    26,
+    173,
+    228,
+    139,
+    22,
+    151,
+    108,
+    8,
+    7,
+    23,
+    55
+  ],
+  "results": [
+    {
+      "index": 163,
+      "issue": {
+        "repo": "textual",
+        "number": 5423,
+        "title": "Ability to capture an 'enter' key press when focus is on a DataTable",
+        "body": "I currently seem unable to capture a press of the enter key when focused on the DataTable widget. This would allow for more intuitive selection.\r\n\r\nHere's the code I had hoped would work:\r\n```python class PeopleView(Container):\r\n\r\n    BINDINGS = [\r\n        Binding('i', 'toggle_id', 'Show/hide ID'),\r\n        Binding('enter', 'select', 'Select/Deselect', show=False)\r\n    ]\r\n\r\n    def compose(self):\r\n        yield DataTable(id='people_table')\r\n\r\n    def on_mount(self):\r\n        table: DataTable = self.query_one(\"#people_table\")\r\n        table.cursor_type = 'row'\r\n        table.add_columns(*COLS)\r\n        for p in serve_people():\r\n            table.add_row(p.name, p.address_line_1, p.address_line_2, p.first_tax_year, key=p.id, label=p.id)\r\n    \r\n    def on_show(self):\r\n        table: DataTable = self.query_one(\"#people_table\")\r\n        table.show_row_labels = False\r\n\r\n    def action_select(self):\r\n        table: DataTable = self.query_one(\"#people_table\")\r\n        cursor_type = table.cursor_type\r\n        match cursor_type:\r\n            case 'row':\r\n                table.cursor_type = 'cell'\r\n            case 'cell':\r\n                pass\r\n\r\n    def action_toggle_id(self) -> None:\r\n        table: DataTable = self.query_one(\"#people_table\")\r\n        table.show_row_labels = True if table.show_row_labels is False else False`"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "DataTable",
+        "severity": "medium",
+        "has_reproduction_steps": true,
+        "summary": "Unable to capture enter key press on DataTable widget, impacting intuitive selection.",
+        "uncertainty": "None apparent",
+        "repo": "textual",
+        "number": 5423
+      }
+    },
+    {
+      "index": 28,
+      "issue": {
+        "repo": "hono",
+        "number": 4169,
+        "title": "Cookie is undefined when using rpc",
+        "body": "### What version of Hono are you using?\n\n4.7.9\n\n### What runtime/platform is your app running on? (with version if possible)\n\nBun\n\n### What steps can reproduce the bug?\n\n1. create a new hono app with bun\n\nthe index.ts should look like this:\n```ts\nexport const app = new Hono()\n  .use((c, n) => {\n    console.log(getCookie(c, \"user_id\"), \"<<\");\n    return n();\n  })\n  .get(\"/profile\", (c) => {\n    return c.text(\"ok\");\n  })\n```\nCreate a index.test.ts file now like this:\n```ts\nconst client = testClient(app);\n\ndescribe(\"test suite for the GET /profile\", () => {\n  test(\"\", async () => {\n    const res = await client.profile.$get(undefined, {\n      headers: {\n        Cookie: \"user_id=5\",\n      },\n    });\n  });\n});\n```\n\n2. Run the test with `bun test`\n\n### What is the expected behavior?\n\nI should see this log in the console \"5 <<\"\n\n### What do you see instead?\n\n\"undefined <<\"\n\n### Additional information\n\nI have tried all possible way to access the the cookies. (c.req.raw.headers, c.header() etc...) with no luck.\n\nIs there a way to pass cookies from a client (in this case in a test env) to the server ?"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "rpc",
+        "severity": "medium",
+        "has_reproduction_steps": true,
+        "summary": "Cookie is undefined when using rpc in Hono app with Bun.",
+        "uncertainty": "None apparent",
+        "repo": "hono",
+        "number": 4169
+      }
+    },
+    {
+      "index": 6,
+      "issue": {
+        "repo": "hono",
+        "number": 3976,
+        "title": "Moving from 4.7.0 to 4.7.1 throws Object is of type 'unknown'. in hono/client",
+        "body": "### What version of Hono are you using?\n\n4.7.1\n\n### What runtime/platform is your app running on? (with version if possible)\n\nCloudflare Workers\n\n### What steps can reproduce the bug?\n\n```ts\nimport type { AppRouter } from \"@repo/api\";\nimport { getApiUrl } from \"@shared/lib/urls\";\nimport { hc } from \"hono/client\";\n\nexport const apiClient = hc<AppRouter>(getApiUrl(), {\n\tinit: {\n\t\tcredentials: \"include\",\n\t},\n}).api;\n```\n\n### What is the expected behavior?\n\n_No response_\n\n### What do you see instead?\n\n_No response_\n\n### Additional information\n\n_No response_"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "client",
+        "severity": "high",
+        "has_reproduction_steps": true,
+        "summary": "Moving from version 4.7.0 to 4.7.1 in Hono client throws an 'Object is of type unknown' error.",
+        "uncertainty": "The expected behavior is not defined, which raises uncertainty about what the correct operation should be. However, the error message indicates a significant issue during version migration.",
+        "repo": "hono",
+        "number": 3976
+      }
+    },
+    {
+      "index": 189,
+      "issue": {
+        "repo": "textual",
+        "number": 5745,
+        "title": "Emojis printed in plotext plots appear strange",
+        "body": "I am displaying some plots using textual-plotext. Genuine pleasure to use.\n\nI have come across one issue so far i.e. when trying to print emojs, something appears to go wrong. Here is a simple example. Any thoughts? Am I passing in unicode text wrongly maybe? It's method I always use with Rich text..\n\n`from textual.app import App, ComposeResult\nfrom textual_plotext import PlotextPlot\n\nPLOT_TEXT = \"Trying to print an emoji.... \" + '\\U0001F930'\n\nclass EmojiApp(App[None]):\n    \"\"\"Example Textual application showing a Plotext plot.\"\"\"\n\n    def __init__(self) -> None:\n        super().__init__()\n\n    def compose(self) -> ComposeResult:\n        \"\"\"Compose the plotting widget.\"\"\"\n        yield PlotextPlot()\n\n    def on_mount(self) -> None:\n        plt = self.query_one(PlotextPlot).plt\n        plt.scatter(plt.sin())\n        plt.text(PLOT_TEXT, 100, 0, color=\"blue+\")\n        plt.title(\"Emoji Plot\")\n\n\nif __name__ == \"__main__\":\n    EmojiApp().run()`\n\n![Image](https://github.com/user-attachments/assets/5413b1be-776f-4ddd-97e4-56cae8b215be)"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "plotext",
+        "severity": "medium",
+        "has_reproduction_steps": true,
+        "summary": "When printing emojis in plotext plots, they appear incorrectly, potentially due to Unicode handling.",
+        "uncertainty": "The report indicates an issue with emoji rendering but does not provide information on the context or environment in which the problem occurs. Additional details on expected vs. actual output would clarify the situation.",
+        "repo": "textual",
+        "number": 5745
+      }
+    },
+    {
+      "index": 70,
+      "issue": {
+        "repo": "hono",
+        "number": 4975,
+        "title": "Router: /** wildcard stops matching when routes with overlapping parameterized segments exist",
+        "body": "## Version\n\n`hono@4.12.23`\n\n## What is the expected behavior?\n\nA `/**` wildcard route should match regardless of what other routes are registered on the same app.\n\n## What is the actual behavior?\n\nA `/**` wildcard route returns 404 when `SmartRouter` falls back from `RegExpRouter` to `TrieRouter` (e.g., when overlapping parameterized segments exist).\n\n## Minimal reproduction\n\n```ts\nimport { Hono } from 'hono';\n\nconst app = new Hono();\napp.all('/auth/**', (c) => c.text('auth'));\napp.get('/pkg/:name/:version', (c) => c.text('pkg'));\napp.get('/pkg/:name/versions', (c) => c.text('versions'));\n\nconst r1 = await app.fetch(new Request('http://localhost/auth/test'));\nconst r2 = await app.fetch(new Request('http://localhost/pkg/lodash/1.0'));\nconst r3 = await app.fetch(new Request('http://localhost/pkg/lodash/versions'));\n\nconsole.log('/auth/test:', r1.status);      // 404 ← BUG (expected 200)\nconsole.log('/pkg/lodash/1.0:', r2.status);  // 200\nconsole.log('/pkg/lodash/versions:', r3.status); // 200\n```\n\n## Root Cause\n\nTwo issues in `TrieRouter`'s handling of `**`:\n\n1. **`getPattern('**')` returns `null`** (`src/utils/url.ts`) — only `'*'` is recognized as a wildcard, so `**` is treated as a literal path segment\n2. **`node.insert()` stores the child under key `'**'`** (`src/router/trie-router/node.ts`) — but `search()` looks up `children['*']`, so the wildcard node is never found\n\nMost apps don't hit this because `SmartRouter` defaults to `RegExpRouter` (which handles `**`). The bug surfaces when `RegExpRouter` can't handle the route set (overlapping param segments like `/:name/:version` + `/:name/versions`) and falls back to `TrieRouter`.\n\n**Direct reproduction on TrieRouter:**\n```ts\nimport { Hono } from 'hono';\nimport { TrieRouter } from 'hono/router/trie-router';\n\nconst app = new Hono({ router: new TrieRouter() });\napp.all('/auth/**', (c) => c.text('auth'));\napp.get('/other', (c) => c.text('other'));\n\nawait app.fetch(new Request('http://localhost/auth/test'));   // 404 ← always fails\nawait app.fetch(new Request('http://localhost/other'));       // 200\n```\n\n## Fix\n\nPR: #4977 — two-line fix:\n- `getPattern()`: recognize `'**'` as equivalent to `'*'`\n- `node.insert()`: use `'*'` as the child key when pattern is a wildcard\n\n## Workarounds\n\n- Use `/*` instead of `/**`"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "Router",
+        "severity": "high",
+        "has_reproduction_steps": true,
+        "summary": "The /** wildcard route returns 404 when overlapping parameterized segments exist, indicating a bug in the Router's handling of wildcards.",
+        "uncertainty": "None apparent",
+        "repo": "hono",
+        "number": 4975
+      }
+    },
+    {
+      "index": 62,
+      "issue": {
+        "repo": "hono",
+        "number": 4708,
+        "title": "Bug: Unhandled Promise Rejection for non-Error throws in middleware",
+        "body": "## 🐛 Bug Report\n\n**Severity:** High  \n**Category:** Error Handling  \n**Location:** `src/compose.ts` (lines 50-58), `src/hono-base.ts` (lines 358-361)\n\n**Found by:** [WhiteRose](https://github.com/shakecodeslikecray/whiterose) - AI-powered bug hunter  \n**Bug ID:** WR-001\n\n---\n\n## 📋 Description\n\nThe middleware composition in Hono only handles exceptions that are instances of the `Error` class. If a middleware throws a value that is **not** an `Error` (e.g., a string, number, or plain object), the error handling mechanism bypasses custom `onError` handlers and leads to an **unhandled promise rejection**, potentially crashing the application.\n\n---\n\n## 🔍 Vulnerable Code Path\n\n**Step 1:** Middleware throws non-Error value\n```typescript\n// src/compose.ts:52\nres = await handler(context, () => dispatch(i + 1))\n// Middleware throws: throw \"something went wrong\"\n```\n\n**Step 2:** Caught but not wrapped\n```typescript\n// src/compose.ts:54\nif (err instanceof Error && onError) {\n  // This fails for non-Error values!\n}\n```\n\n**Step 3:** Re-thrown without handling\n```typescript\n// src/compose.ts:57\nthrow err  // Non-Error value propagates\n```\n\n**Step 4:** Same issue in hono-base.ts\n```typescript\n// src/hono-base.ts:358\nif (err instanceof Error) {\n  // Also fails for non-Error values\n}\n// Line 361\nthrow err  // Unhandled promise rejection!\n```\n\n---\n\n## 💥 Impact\n\n- **Bypasses custom error handlers:** User-defined `onError` handlers are never called\n- **Application crashes:** Unhandled promise rejections can crash the process\n- **Poor error visibility:** Errors don't get logged or handled properly\n\n---\n\n## ✅ Suggested Fix\n\nWrap non-Error values in an `Error` object before processing:\n\n**In `src/compose.ts`:**\n```typescript\n} catch (err) {\n  const error = err instanceof Error ? err : new Error(String(err))\n  if (onError) {\n    await onError(error, context)\n    // ...\n  }\n}\n```\n\n**In `src/hono-base.ts` (#handleError method):**\n```typescript\n#handleError(err: unknown, c: Context<E>) {\n  const error = err instanceof Error ? err : new Error(String(err))\n  // Use 'error' instead of 'err' for rest of method\n}\n```\n\n---\n\n## 🧪 Reproduction\n\n```typescript\nimport { Hono } from 'hono'\n\nconst app = new Hono()\n\napp.use('*', async (c, next) => {\n  throw \"This is not an Error object!\"  // ❌ Causes unhandled rejection\n})\n\napp.onError((err, c) => {\n  console.log('This never gets called!')\n  return c.text('Error handled', 500)\n})\n\nexport default app\n```\n\n**Expected:** `onError` handler catches the error  \n**Actual:** Unhandled promise rejection, app crashes\n\n---\n\n## 🔗 References\n\n- **WhiteRose:** https://github.com/shakecodeslikecray/whiterose\n- **Detection Pass:** error-propagation-trace\n- **Related:** This affects both `compose.ts` and `hono-base.ts`\n\n---\n\n💡 **Community contribution welcome!** This is a great first issue for contributors familiar with error handling.\n\n---\n\n_Found automatically by WhiteRose AI bug hunter - helping make open source more secure 🛡️_"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "middleware",
+        "severity": "high",
+        "has_reproduction_steps": true,
+        "summary": "Unhandled Promise Rejection for non-Error throws in middleware, leading to application crashes and bypassed error handlers.",
+        "uncertainty": "None apparent",
+        "repo": "hono",
+        "number": 4708
+      }
+    },
+    {
+      "index": 57,
+      "issue": {
+        "repo": "hono",
+        "number": 4579,
+        "title": "hono client type in unknown",
+        "body": "### What version of Hono are you using?\n\n4.11.0\n\n### What runtime/platform is your app running on? (with version if possible)\n\nbun\n\n### What steps can reproduce the bug?\n\n<img width=\"879\" height=\"594\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/80b8dc84-d674-4ecf-a2fb-d9d0b25f7b58\" />\n\n<img width=\"879\" height=\"393\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/b3edc30d-27f9-40a6-9683-9d5b372f2105\" />\n\n\n<img width=\"879\" height=\"393\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/4a8917f1-a0b7-4123-9e98-88b2d9884dc4\" />\n\n### What is the expected behavior?\n\n_No response_\n\n### What do you see instead?\n\n_No response_\n\n### Additional information\n\n_No response_"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "unknown",
+        "component": "client",
+        "severity": "unknown",
+        "has_reproduction_steps": true,
+        "summary": "Issue with 'hono' client type is reported without specific details on the expected and actual behavior.",
+        "uncertainty": "The report lacks explicit expected behavior and allows for multiple interpretations; thus, the issue type and severity are unclear.",
+        "repo": "hono",
+        "number": 4579
+      }
+    },
+    {
+      "index": 35,
+      "issue": {
+        "repo": "hono",
+        "number": 4261,
+        "title": "Expose event to know when request has finished so as to to do cleanup",
+        "body": "### What version of Hono are you using?\n\n4.6.13\n\n### What runtime/platform is your app running on? (with version if possible)\n\nCloudflare workers\n\n### What steps can reproduce the bug?\n\nHello,\n\nI have been wanting to do some cleanup after a request has finish. In node and express there's a finish event I can listen for and do some cleanup(call end on postgres connection).\n\nHowever in Hono I couldn't find anything similar.  Is it possible? \n\n### What is the expected behavior?\n\n_No response_\n\n### What do you see instead?\n\n_No response_\n\n### Additional information\n\n_No response_"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "enhancement",
+        "component": "request handling",
+        "severity": "medium",
+        "has_reproduction_steps": false,
+        "summary": "Request handling enhancement to expose finish event for cleanup actions.",
+        "uncertainty": "None apparent",
+        "repo": "hono",
+        "number": 4261
+      }
+    },
+    {
+      "index": 188,
+      "issue": {
+        "repo": "textual",
+        "number": 5721,
+        "title": "RadioButton unicode circle display has a line through it",
+        "body": "## The bug\n\nIssue: When using RadioButton in a RadioSet, the toggle glyph (●) renders with a visible horizontal line through it, making it appear broken or misaligned.\n\n![Image](https://github.com/user-attachments/assets/7d7ecf84-4992-413d-b655-eff7cdf17bed)\n\nEnvironment: Ubuntu 22.04.5 LTS using the default GNOME Terminal.\n\n```\ntextual diagnose\n```\n# Textual Diagnostics\n\n## Versions\n\n| Name    | Value  |\n|---------|--------|\n| Textual | 2.1.2  |\n| Rich    | 13.9.4 |\n\n## Python\n\n| Name           | Value            |\n|----------------|------------------|\n| Version        | 3.10.12          |\n| Implementation | CPython          |\n| Compiler       | GCC 11.4.0       |\n| Executable     | /usr/bin/python3 |\n\n## Operating System\n\n| Name    | Value                                                            |\n|---------|------------------------------------------------------------------|\n| System  | Linux                                                            |\n| Release | 6.8.0-52-generic                                                 |\n| Version | #53~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Wed Jan 15 19:18:46 UTC 2 |\n\n## Terminal\n\n| Name                 | Value          |\n|----------------------|----------------|\n| Terminal Application | GNOME Terminal |\n| TERM                 | xterm-256color |\n| COLORTERM            | truecolor      |\n| FORCE_COLOR          | *Not set*      |\n| NO_COLOR             | *Not set*      |\n\n## Rich Console options\n\n| Name           | Value                |\n|----------------|----------------------|\n| size           | width=123, height=50 |\n| legacy_windows | False                |\n| min_width      | 1                    |\n| max_width      | 123                  |\n| is_terminal    | True                 |\n| encoding       | utf-8                |\n| max_height     | 50                   |\n| justify        | None                 |\n| overflow       | None                 |\n| no_wrap        | False                |\n| highlight      | None                 |\n| markup         | None                 |\n| height         | None                 |\n\n\n"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "RadioButton",
+        "severity": "medium",
+        "has_reproduction_steps": true,
+        "summary": "RadioButton glyph renders with a visible line through it, appearing broken or misaligned.",
+        "uncertainty": "None apparent",
+        "repo": "textual",
+        "number": 5721
+      }
+    },
+    {
+      "index": 26,
+      "issue": {
+        "repo": "hono",
+        "number": 4154,
+        "title": "Streaming not working with Hono Node Server",
+        "body": "### What version of Hono are you using?\n\n^4.7.10\n\n### What runtime/platform is your app running on? (with version if possible)\n\nNode.js\n\n### What steps can reproduce the bug?\nStreaming doesn't work. it send the response once it's done processing fully. i tried with the bun dev (not bun server) but somehow it seemed working, really strange.\n\nWe can run this repo locally: https://github.com/nilooy/my-better-t-app-2 to reproduce it.\nthe suspected code is here: https://github.com/nilooy/my-better-t-app-2/blob/main/apps/server/src/index.ts#L42-L60\n\n```js\napp.post(\"/ai\", async (c) => {\n  const body = await c.req.json();\n  const messages = body.messages || [];\n\n  const result = streamText({\n    model: openai(\"o3-mini\"),\n    messages,\n  });\n\n  for await (const chunk of result.toDataStream()) {\n    console.log(chunk);\n  }\n\n  c.header(\"X-Vercel-AI-Data-Stream\", \"v1\");\n  c.header(\"Content-Type\", \"text/plain; charset=utf-8\");\n\n  return stream(c, (stream) => stream.pipe(result.toDataStream()));\n});\n```\n\nVIDEO:\n\nhttps://github.com/user-attachments/assets/c40d44c1-0cac-45f1-983b-0e9fc95cb018\n\n### What is the expected behavior?\n\nIt streams data to the ui.\n\n### What do you see instead?\n\nStreaming doesn't work. it send the response once it's done processing fully. i tried with the bun dev (not bun server) but somehow it seemed working, really strange.\n\n### Additional information\n\n_No response_"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "streaming",
+        "severity": "high",
+        "has_reproduction_steps": true,
+        "summary": "Streaming functionality in Hono Node Server does not work as expected; the response is sent only after full processing instead of streaming data.",
+        "uncertainty": "None apparent",
+        "repo": "hono",
+        "number": 4154
+      }
+    },
+    {
+      "index": 173,
+      "issue": {
+        "repo": "textual",
+        "number": 5539,
+        "title": "Difference in behaviour of `OptionList.add_options` in Textual v2.0",
+        "body": "Previously this code:\n\n```python\nfrom textual.app import App, ComposeResult\nfrom textual.widgets import OptionList\n\nclass OptionListBugApp(App[None]):\n\n    def compose(self) -> ComposeResult:\n        yield OptionList()\n\n    def on_mount(self) -> None:\n        self.query_one(OptionList).add_options(f\"Option {n}\" for n in range(100))\n\nif __name__ == \"__main__\":\n    OptionListBugApp().run()\n```\n\nwould result in a populated `OptionList`. As of v2.0.0 it now results in an unpopulated `OptionList`."
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "OptionList",
+        "severity": "high",
+        "has_reproduction_steps": true,
+        "summary": "Difference in behaviour of `OptionList.add_options` in Textual v2.0 leading to unpopulated `OptionList`.",
+        "uncertainty": "None apparent",
+        "repo": "textual",
+        "number": 5539
+      }
+    },
+    {
+      "index": 228,
+      "issue": {
+        "repo": "textual",
+        "number": 6445,
+        "title": "A DOMQuery that matches nothing is treated as matching everything when chained with `exclude()` and/or `filter()`",
+        "body": "- [x] Have you checked closed issues? (https://github.com/Textualize/textual/issues?q=is%3Aissue+is%3Aclosed)\n\n- [x] Have you checked against the most recent version of Textual? (https://pypi.org/search/?q=textual)\n\n## The bug\n\nWhen composing DOMQuery, filters/excludes of a `parent` query are discarded when that `parent` query does not match anything.\n\nExample:\nGiven a widget that does not have any `Foo` widget descendants, run this query:\n```python\nquery = self.query(\"Foo\").exclude(\"#bar\")\n```\nThe parent `query(\"Foo\")` does not match any nodes. But, that filter is _lost_ for any additional `exclude(...)` or `filter(...)` calls. So, the above query is effectively:\n```python\nquery = self.query(\"*\").exclude(\"#bar\")\n```\n\nI expected a query query like this to match nothing, but it matches everything except any `id=\"bar\"` widget(s).\n\nThis bug is caused by the `__init__` and `__bool__` methods of `DOMQuery`. Calling `exclude` (or `filter`) creates a new `DOMQuery` passing the self as `parent`:\n\nhttps://github.com/Textualize/textual/blob/0f0849fd37fbd0d4d6f81889476c22340129df67/src/textual/css/query.py#L199-L213\n\nThe `parent` arg of `DOMQuery.__init__` is typed as `DOMQuery | None`:\n\nhttps://github.com/Textualize/textual/blob/0f0849fd37fbd0d4d6f81889476c22340129df67/src/textual/css/query.py#L69\n\nThen, these `DOMQuery.__init__` lines handle preserving data from the parent:\n\nhttps://github.com/Textualize/textual/blob/0f0849fd37fbd0d4d6f81889476c22340129df67/src/textual/css/query.py#L90-L95\n\nI suspect the `if parent` was meant to filter instances where `parent` is `None`. But, if `parent` is not `None`, the `DOMQuery.__bool__` method gets called:\n\nhttps://github.com/Textualize/textual/blob/0f0849fd37fbd0d4d6f81889476c22340129df67/src/textual/css/query.py#L140-L142\n\nSo, when chaining a `widget.query(...)` with `exclude(...)` and/or `include(...)`, if any level of the chained calls matches nothing, any filters and excludes get discarded when constructing the next chained `DOMQuery`.\n\nI don't have bandwidth to add tests and file a PR right now, but I suspect `DOMQuery.__init__` could be changed to use `if parent is not None` instead of `if parent` like this to resolve the issue:\n\n```diff\n         self._filters: list[tuple[SelectorSet, ...]] = (\n-            parent._filters.copy() if parent else []\n+            parent._filters.copy() if parent is not None else []\n         )\n         self._excludes: list[tuple[SelectorSet, ...]] = (\n-            parent._excludes.copy() if parent else []\n+            parent._excludes.copy() if parent is not None else []\n         )\n```\n\n# Textual Diagnostics\n\n## Versions\n\n| Name    | Value  |\n|---------|--------|\n| Textual | 8.1.1  |\n| Rich    | 14.3.2 |\n\n## Python\n\n| Name           | Value                                                      |\n|----------------|------------------------------------------------------------|\n| Version        | 3.13.7                                                     |\n| Implementation | CPython                                                    |\n| Compiler       | Clang 20.1.4                                               |\n| Executable     | /home/jafloyd/g/github/copart-pe/ghe.git/.venv/bin/python3 |\n\n## Operating System\n\n| Name    | Value                                                            |\n|---------|------------------------------------------------------------------|\n| System  | Linux                                                            |\n| Release | 6.8.0-90-generic                                                 |\n| Version | #91~22.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Nov 20 15:20:45 UTC 2 |\n\n## Terminal\n\n| Name                 | Value          |\n|----------------------|----------------|\n| Terminal Application | Konsole 220403 |\n| TERM                 | xterm-256color |\n| COLORTERM            | truecolor      |\n| FORCE_COLOR          | *Not set*      |\n| NO_COLOR             | *Not set*      |\n\n## Rich Console options\n\n| Name           | Value                |\n|----------------|----------------------|\n| size           | width=236, height=55 |\n| legacy_windows | False                |\n| min_width      | 1                    |\n| max_width      | 236                  |\n| is_terminal    | True                 |\n| encoding       | utf-8                |\n| max_height     | 55                   |\n| justify        | None                 |\n| overflow       | None                 |\n| no_wrap        | False                |\n| highlight      | None                 |\n| markup         | None                 |\n| height         | None                 |\n\n"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "DOMQuery",
+        "severity": "high",
+        "has_reproduction_steps": true,
+        "summary": "When a parent DOMQuery matches nothing, chained exclude/filter operations lose their filtering effect, causing unintended matches.",
+        "uncertainty": "None apparent",
+        "repo": "textual",
+        "number": 6445
+      }
+    },
+    {
+      "index": 139,
+      "issue": {
+        "repo": "litestar",
+        "number": 4531,
+        "title": "Bug: after_request does not trigger on responses returned from exception handlers",
+        "body": "### Description\n\nIf an exception is raised and mapped to a response by an exception handler, `after_request` is not called on it.\n\nI'm aware that this may be by design (because either the exception handler can catch an exception raised in an `after_request` hook, or the `after_request` hook can modify the response; anything else risks infinite recursion). However, _personally_, it makes more sense to me for the `after_request` hook to run later.\n\nIn any case, even if this is intended behaviour (and this may be a better fit for a docs issue), what is supposed to happen is nonobvious, since, AFAIK, there is no diagram on the Litestar website that shows the various Litestar components a request travels through from the point it's assembled from ASGI events to the point it gets turned back into ASGI events (e.g. `before_request` -> router -> route handler -> ....\n\n### URL to code causing the issue\n\n_No response_\n\n### MCVE\n\n```python\nfrom typing import Never\n\nfrom litestar import Litestar\nfrom litestar import Request\nfrom litestar import Response\nfrom litestar import get\n\n\n@get(\"/\")\ndef f() -> Never:\n    raise ValueError()\n\n\ndef after_request(response: Response) -> Response:\n    return Response(\"from after request\")\n\n\ndef exception_handler(request: Request, exception: Exception) -> Response:\n    return Response(\"from exception handler\")\n\n\napp = Litestar(route_handlers=[f], after_request=after_request, exception_handlers={Exception: exception_handler})\n```\n\n### Steps to reproduce\n\n1. Host the ASGI app in the MCVE.\n2. Access `/`.\n\n### Screenshots\n\n_No response_\n\n### Logs\n\n```text\n\n```\n\n### Litestar Version\n\n2.19.0\n\n### Platform\n\n- [ ] Linux\n- [ ] Mac\n- [ ] Windows\n- [ ] Other (Please specify in the description above)"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "request handling",
+        "severity": "medium",
+        "has_reproduction_steps": true,
+        "summary": "The after_request hook does not trigger on responses returned from exception handlers, which could impact the request handling workflow.",
+        "uncertainty": "While the behavior could be intended, the lack of documentation or clear explanation renders it nonobvious, hence a potential area for confusion.",
+        "repo": "litestar",
+        "number": 4531
+      }
+    },
+    {
+      "index": 22,
+      "issue": {
+        "repo": "hono",
+        "number": 4103,
+        "title": "Validator for queries inconsistent",
+        "body": "### What version of Hono are you using?\n\n4.7.2\n\n### What runtime/platform is your app running on? (with version if possible)\n\nCloudflare Workers\n\n### What steps can reproduce the bug?\n\nHave a route with a query parameter and add a validator for this query parameter. If I use this parameter only one time, the value to be validated is a string, otherwise an array of strings.\n\nThe problem comes from this line in the validator function:\nhttps://github.com/honojs/hono/blob/15a83b125cae5a772f265ce448974c03efa5e3bc/src/validator/validator.ts#L126\n\n### What is the expected behavior?\n\nI would expect to validate only the array version for query parameters."
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "validator",
+        "severity": "medium",
+        "has_reproduction_steps": true,
+        "summary": "Validator for query parameters behaves inconsistently based on usage count.",
+        "uncertainty": "None apparent",
+        "repo": "hono",
+        "number": 4103
+      }
+    },
+    {
+      "index": 151,
+      "issue": {
+        "repo": "litestar",
+        "number": 4780,
+        "title": "ASGIStreamingResponse `headers` should support iterable in addition to dict",
+        "body": "ASGIStreamingResponse `headers` should support iterable in addition to dict, to match the typing of `headers` attributes in the rest of this library. as headers can be duplicated. unless there's some reason that this specific location doesn't support repeated headers?\n\n(edited)"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "enhancement",
+        "component": "ASGIStreamingResponse",
+        "severity": "medium",
+        "has_reproduction_steps": null,
+        "summary": "ASGIStreamingResponse headers should support iterable in addition to dict to align with the library's typing for headers attributes, allowing for duplicated headers.",
+        "uncertainty": "The request for supporting iterable headers is presented, but there are no reproduction steps provided to demonstrate the need or the current limitation.",
+        "repo": "litestar",
+        "number": 4780
+      }
+    },
+    {
+      "index": 108,
+      "issue": {
+        "repo": "litestar",
+        "number": 4117,
+        "title": "BUG: Broken re-export from `litestar.plugins.sqlalchemy.repository`",
+        "body": "### Description\n\n```python\nfrom litestar.contrib.sqlalchemy.repository import SQLAlchemyAsyncRepository  # Async CRUD operations\n```\nGive following warning:\n\n```\n..\\..\\.conda\\envs\\backery-back-end\\Lib\\site-packages\\litestar\\contrib\\sqlalchemy\\repository\\__init__.py:37\nLib\\site-packages\\litestar\\contrib\\sqlalchemy\\repository\\__init__.py:37: DeprecationWarning: Import of deprecated import 'litestar.contrib.sqla\nlchemy.repository.SQLAlchemyAsyncRepository'. Deprecated in litestar 2.12. This import will be removed in 3.0. importing SQLAlchemyAsyncRepository from 'litestar.contrib.sqlalchemy.repository' is deprecated, please import it from 'litestar.plugins.sqlalchemy.repository' instead\n    warn_deprecation(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n\n```\n\nHowever, change from \n```python\nfrom litestar.contrib.sqlalchemy.repository import SQLAlchemyAsyncRepository  # Async CRUD operations\n# to\nfrom litestar.plugins.sqlalchemy.repository import SQLAlchemyAsyncRepository   # Async CRUD operations\n```\nOutputs:\n```\nsql_manage\\relation.py:22: in <module>\n    from litestar.plugins.sqlalchemy.repository import SQLAlchemyAsyncRepository  # Async CRUD operations\nE   ModuleNotFoundError: No module named 'litestar.plugins.sqlalchemy.repository'; 'litestar.plugins.sqlalchemy' is not a package\n```\n\nI have to use\n```\nfrom litestar.plugins.sqlalchemy import repository  # Async CRUD operations\n```\nthen call it like\n```\nrepository.SQLAlchemyAsyncRepository\n```\n\n\n\n### URL to code causing the issue\n\n_No response_\n\n### MCVE\n\n```python\n\n```\n\n### Steps to reproduce\n\n1. Go to '...'\n2. Click on '....'\n3. Scroll down to '....'\n4. See error\n\n\n### Screenshots\n\n_No response_\n\n### Logs\n\n```text\n\n```\n\n### Litestar Version\n\nI am running\n```\nlitestar                  2.15.1\nlitestar-htmx             0.4.1\n```\n\n\n### Platform\n\n- [ ] Linux\n- [ ] Mac\n- [x] Windows\n- [ ] Other (Please specify in the description above)"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "litestar.plugins.sqlalchemy",
+        "severity": "high",
+        "has_reproduction_steps": false,
+        "summary": "Import issue with `SQLAlchemyAsyncRepository` from `litestar.plugins.sqlalchemy.repository` resulting in a `ModuleNotFoundError`.",
+        "uncertainty": "The user reports an issue related to broken re-exports and details steps to import the module. However, the reproduction steps are vague ('Go to...', 'Click on...'), making it uncertain whether they provide concrete reproduction steps.",
+        "repo": "litestar",
+        "number": 4117
+      }
+    },
+    {
+      "index": 8,
+      "issue": {
+        "repo": "hono",
+        "number": 3987,
+        "title": "Basic Auth Middleware does not work with Error Handling",
+        "body": "### What version of Hono are you using?\n\n4.7.4\n\n### What runtime/platform is your app running on? (with version if possible)\n\nDeno 2.2.3\n\n### What steps can reproduce the bug?\n\nRunning `deno run -A main.ts` for this example of [Basic Auth Middleware](https://hono.dev/docs/middleware/builtin/basic-auth#usage) works like intended: \n\n```typescript\n// main.ts\nimport { Hono } from 'hono'\nimport { basicAuth } from 'hono/basic-auth'\n\nconst app = new Hono()\n\napp.use(\n  '/auth/*',\n  basicAuth({\n    username: 'hono',\n    password: 'acoolproject',\n  })\n)\n\napp.get('/auth/page', (c) => {\n  return c.text('You are authorized')\n})\n\nDeno.serve(app.fetch)\n```\n\nBut I can't reach the basic auth page when adding [error handling](https://hono.dev/docs/api/hono#error-handling): The page displays `Custom Error Message`.\n\n```typescript\n// main.ts\nimport { Hono } from 'hono'\nimport { basicAuth } from 'hono/basic-auth'\n\nconst app = new Hono()\n\napp.use(\n  '/auth/*',\n  basicAuth({\n    username: 'hono',\n    password: 'acoolproject',\n  })\n)\n\napp.get('/auth/page', (c) => {\n  return c.text('You are authorized')\n})\n\napp.onError((err, c) => {\n   console.error(`${err}`)\n   return c.text('Custom Error Message', 500)\n})\n\nDeno.serve(app.fetch)\n```\n\n### What is the expected behavior?\n\n![Image](https://github.com/user-attachments/assets/51013e1a-c442-43c2-9419-a1f22a6408a0)\n\n### What do you see instead?\n\n![Image](https://github.com/user-attachments/assets/b5eb3d8b-726a-46e2-a3cb-8cf4e2ab6f31)\n\n### Additional information\n\n_No response_"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "basic-auth",
+        "severity": "high",
+        "has_reproduction_steps": true,
+        "summary": "Basic Auth Middleware fails when error handling is added, displaying a custom error message instead of authorizing the user.",
+        "uncertainty": "None apparent",
+        "repo": "hono",
+        "number": 3987
+      }
+    },
+    {
+      "index": 7,
+      "issue": {
+        "repo": "hono",
+        "number": 3979,
+        "title": "CORS middleware: Possible to make OPTIONS handling optional?",
+        "body": "Does the CORS specification mandates that the HTTP OPTIONS method to be handled in a specific way?\n\nhttps://github.com/honojs/hono/blob/eb86162a9a4472ef86329efe27007caf0afb9284/src/middleware/cors/index.ts#L113\n\nCan we make that behavior optional by adding all the required headers before the `await next()` and returning a default 204 response after the `await next()` only if no response has been sent by the previous route handlers? "
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "enhancement",
+        "component": "CORS middleware",
+        "severity": "medium",
+        "has_reproduction_steps": null,
+        "summary": "Proposal to make OPTIONS handling in CORS middleware optional.",
+        "uncertainty": "The issue raises a question about the CORS specification without concrete steps to reproduce or verify the claim. No explicit reproduction steps provided.",
+        "repo": "hono",
+        "number": 3979
+      }
+    },
+    {
+      "index": 23,
+      "issue": {
+        "repo": "hono",
+        "number": 4105,
+        "title": "RequestId middleware accepts X-Request-Id header from any route",
+        "body": "### What version of Hono are you using?\n\nlatest\n\n### What runtime/platform is your app running on? (with version if possible)\n\nnode\n\n### What steps can reproduce the bug?\n\nIf requestId middleware is added into Hono application like it is documented over here https://hono.dev/docs/middleware/builtin/request-id it is vulnerable to log tampering because it accepts requestId header `X-Request-Id` from request made from browser (https://github.com/honojs/hono/blob/15a83b125cae5a772f265ce448974c03efa5e3bc/src/middleware/request-id/request-id.ts#L48) and anyone can provide static requestId which will mess up logs.\n\n\n\n\n### What is the expected behavior?\n\nSecure by default. \n\nUsage documentation https://hono.dev/docs/middleware/builtin/request-id should warn about this issue when configured to all routes.\n\nPotentially RequestId middleware configuration options should take path(s) option which are considered as insecure or secure and based on that information trust or untrust given `X-Request-Id` header.\n\n### What do you see instead?\n\n_No response_\n\n### Additional information\n\n_No response_"
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "bug",
+        "component": "request-id middleware",
+        "severity": "high",
+        "has_reproduction_steps": true,
+        "summary": "RequestId middleware accepts X-Request-Id header from any route, which can lead to log tampering.",
+        "uncertainty": "The issue clearly indicates security vulnerabilities due to improper handling of the X-Request-Id header, suggesting high impact on logging integrity.",
+        "repo": "hono",
+        "number": 4105
+      }
+    },
+    {
+      "index": 55,
+      "issue": {
+        "repo": "hono",
+        "number": 4560,
+        "title": "RPC Client types are too tightly coupled to native fetch API, making custom fetch clients impractical",
+        "body": "## Description\n\nThe RPC client accepts a custom `fetch` implementation via options, but the `ClientResponse` types are tightly coupled to the native fetch API. This makes it impractical to use popular fetch wrappers like `ofetch`, `ky`, or `axios` without significant type workarounds.\n\n## Current Behavior\n\nWhen using a custom fetch client, the `ClientResponse` types still expect native fetch methods like `res.ok`, `res.json()`, `res.text()`, etc. However, custom fetch clients have different APIs and behaviors:\n\n- **ofetch**: Throws errors on non-2xx responses instead of returning a response object with `ok: false`\n- **ky**: Similar behavior with a different API surface\n- **axios**: Uses `data` property instead of methods like `.json()`\n\n## Example\n\nHere's a real-world case using `ofetch` in a Nuxt application:\n\n```typescript\nimport { createClient } from '@sdk/v1'\nimport type { ClientResponse } from 'hono/client'\n\nexport default function useApi() {\n  const client = createClient('', {\n    fetch: useAuthFetch(), // ofetch-based custom fetcher\n  })\n\n  return client\n}\n\n// Workaround: Type utility to extract 200 response since ofetch throws on non-2xx\nexport function res200<T>(\n  res: T,\n): Extract<T, { status: 200 }> extends ClientResponse<infer Body, 200, any>\n  ? Body\n  : Extract<T, { status: 200 }> {\n  return res as any\n}\n\n// Usage - must use .then(res200) after every RPC call\nconst result = await client.v1.orders.$get({ query: q }).then(res200)\n```\n\nThe custom fetch implementation:\n\n```typescript\nexport function useAuthFetch() {\n  const instance = $fetch.create({ // ofetch\n    baseURL: '/api',\n    \n    onRequest({ options }) {\n      // Add auth headers\n    },\n    \n    async onResponseError({ response }) {\n      // Handle 401, refresh tokens, etc.\n      // ofetch throws here for non-2xx responses\n    },\n  })\n\n  return instance\n}\n```\n\n## Problem\n\n1. The `ClientResponse` type assumes native fetch behavior\n2. Custom fetch clients have different APIs and error handling strategies\n3. TypeScript doesn't know that non-2xx responses will never arrive as normal response objects when using `ofetch`\n4. Users must create type workarounds like `res200()` for every RPC call\n5. This defeats the purpose of having type-safe RPC calls\n\n## Impact\n\n- Loss of type safety when using custom fetch clients\n- Boilerplate workarounds required for every API call\n- Custom fetch clients (which are essential for auth, retries, interceptors) become impractical\n- The `fetch` option in RPC client is advertised but not truly usable with real-world fetch implementations\n\n## Possible Solutions\n\n1. **Generic type parameter for fetch response type**\n   ```typescript\n   type ClientResponse<TBody, TStatus, TFormat, TFetchClient = 'native'> = ...\n   ```\n\n2. **Separate type for custom fetch clients**\n   ```typescript\n   type CustomClientResponse<TBody, TStatus> = TBody\n   ```\n\n3. **Configuration option to specify fetch behavior**\n   ```typescript\n   createClient('/', { \n     fetch: customFetch,\n     fetchBehavior: 'throw-on-error' // or 'native'\n   })\n   ```\n\n4. **Response transformer function**\n   Allow users to provide a type-safe transformer that maps their fetch client's response to a known shape\n\n## Environment\n\n- Hono version: Latest\n- Custom fetch client: ofetch (part of Nuxt/Nitro ecosystem)\n- Use case: Nuxt 4 application with authentication, token refresh, and error handling\n\n## Related\n\nThis affects anyone using:\n- ofetch (Nuxt/Nitro)\n- ky\n- axios\n- Any custom fetch wrapper with authentication/retry logic\n\nThe current workaround significantly reduces the developer experience and type safety that Hono's RPC client promises to deliver."
+      },
+      "status": "success",
+      "triage": {
+        "issue_type": "enhancement",
+        "component": "RPC Client",
+        "severity": "medium",
+        "has_reproduction_steps": false,
+        "summary": "The RPC client is overly dependent on the native fetch API, making it hard to use custom fetch clients like ofetch, ky, or axios without complex type workarounds.",
+        "uncertainty": "None apparent",
+        "repo": "hono",
+        "number": 4560
+      }
+    }
+  ],
+  "completed_at": "2026-11-02T12:41:16.071290+00:00",
+  "successful": 20,
+  "failed": 0
+}
